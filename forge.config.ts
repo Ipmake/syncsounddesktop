@@ -15,7 +15,8 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: './images/logo.png',
-    name: 'SyncSound Desktop'
+    name: 'SyncSound Desktop',
+    executableName: 'syncsounddesktop'
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerDeb({})],
