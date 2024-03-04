@@ -19,7 +19,9 @@ const config: ForgeConfig = {
     executableName: 'syncsounddesktop'
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerDeb({})],
+  makers: [new MakerSquirrel({
+    setupIcon:  __dirname + "/images/logo.ico"
+  }), new MakerZIP({}, ['darwin']), new MakerDeb({})],
   plugins: [],
 };
 
