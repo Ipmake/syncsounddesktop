@@ -77,9 +77,11 @@ const createWindow = (): void => {
   })
 
   mainWindow.on('close', () => {
-    fs.writeFileSync(`${os.homedir()}/AppData/Roaming/SyncSound/lastpos`, JSON.stringify(mainWindow.getBounds()));
+    if (os.platform() === 'win32') fs.writeFileSync(`${os.homedir()}/AppData/Roaming/SyncSound/lastpos`, JSON.stringify(mainWindow.getBounds()));
+    if (os.platform() === 'linux') fs.writeFileSync(`${os.homedir()}/.config/SyncSound/lastpos`, JSON.stringify(mainWindow.getBounds()));
   })
 
+    
   mainWindow.webContents.on('did-finish-load', () => {
     setInterval(async () => {
       const data = await mainWindow.webContents.executeJavaScript(`window.getPlayBackInfo()`);
