@@ -14,7 +14,7 @@ import { rendererConfig } from './webpack.renderer.config';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    icon: './images/logo.png',
+    icon: __dirname + '/images/logo.ico',
     name: 'SyncSound Desktop',
     executableName: 'syncsounddesktop'
   },
