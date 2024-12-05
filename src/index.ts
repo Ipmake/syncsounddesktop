@@ -68,38 +68,44 @@ const createWindow = (): void => {
 
   mainWindow.setMenu(menu);
 
-  // and load the index.html of the app.
-  mainWindow.loadURL("https://open.syncsound.net");
-
-  mainWindow.webContents.on('will-navigate', (event, url) => {
-    if (url === 'https://open.syncsound.net/login') LoginProcess(mainWindow);
-    if (url === 'https://syncsound.net/') mainWindow.loadURL('https://open.syncsound.net');
-  })
+  // mainWindow.webContents.on('will-navigate', (event, url) => {
+  //   console.log(url)
+  //   if (url === 'https://open.syncsound.net/login') LoginProcess(mainWindow);
+  //   if (url === 'https://syncsound.net/') mainWindow.loadURL('https://open.syncsound.net');
+  // })
 
   mainWindow.on('close', () => {
     if (os.platform() === 'win32') fs.writeFileSync(`${os.homedir()}/AppData/Roaming/SyncSound/lastpos`, JSON.stringify(mainWindow.getBounds()));
     if (os.platform() === 'linux') fs.writeFileSync(`${os.homedir()}/.config/SyncSound/lastpos`, JSON.stringify(mainWindow.getBounds()));
   })
 
-    
-  mainWindow.webContents.on('did-finish-load', () => {
-    setInterval(async () => {
-      const data = await mainWindow.webContents.executeJavaScript(`window.getPlayBackInfo()`);
-      if (!data) return;
 
-      if (!data.queue[0]) rpc.updatePresence({
-        details: `Idle`,
-        state: `In session (${data.members.length} of 8)`,
-        largeImageKey: "https://open.syncsound.net/logo.png"
-      })
-      else rpc.updatePresence({
-        details: `Playing ${data.queue[0].title}`,
-        state: `In session (${data.members.length} of 8)`,
-        largeImageKey: data.queue[0].thumbnail,
-        ...(!data.playback.paused && {
-          endTimestamp: Date.now() + (data.queue[0].duration - data.playback.time) * 1000,
+  mainWindow.loadURL("https://open.syncsound.net");
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    console.log(mainWindow.webContents.getURL())
+    if (mainWindow.webContents.getURL() === "https://open.syncsound.net/login") return LoginProcess(mainWindow);
+    setInterval(async () => {
+      try {
+        const data = await mainWindow.webContents.executeJavaScript(`window.getPlayBackInfo()`);
+        if (!data) return;
+
+        if (!data.queue[0]) rpc.updatePresence({
+          details: `Idle`,
+          state: `In session (${data.members.length} of 8)`,
+          largeImageKey: "https://open.syncsound.net/logo.png"
         })
-      })
+        else rpc.updatePresence({
+          details: `Playing ${data.queue[0].title}`,
+          state: `In session (${data.members.length} of 8)`,
+          largeImageKey: data.queue[0].thumbnail,
+          ...(!data.playback.paused && {
+            endTimestamp: Date.now() + (data.queue[0].duration - data.playback.time) * 1000,
+          })
+        })
+      } catch (error) {
+        console
+      }
     }, 3000);
   });
 };
@@ -142,5 +148,5 @@ async function LoginProcess(mainWindow: BrowserWindow) {
     timeout: 1000 * 60 * 10
   });
 
-  mainWindow.loadURL(`https://open.syncsound.net/auth/login?code=${code.data}`);
+  mainWindow.loadURL(`https://open.syncsound.net/auth/discord?code=${code.data}`);
 }

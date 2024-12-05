@@ -3,7 +3,7 @@
   "productName": "SyncSound Desktop",
   "version": "1.0.0",
   "description": "SyncSound Desktop app",
-  "main": ".webpack/main",
+  "main": "dist/index.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
